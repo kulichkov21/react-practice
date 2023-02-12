@@ -1,15 +1,14 @@
 import React from 'react';
 import './App.css';
 import Layout from "./hoc/Layout/Layout";
+import Quiz from "./containers/Quiz/Quiz";
 
 function App() {
-  return (
-    <Layout>
-        <div style={{width: '400px', border: '1px solid black'}}>
-            <h1>Layout</h1>
-        </div>
-    </Layout>
-  );
+    return (
+        <Layout>
+            <Quiz/>
+        </Layout>
+    );
 }
 
 export default App;
