@@ -8,35 +8,48 @@ class Quiz extends Component<any, IQuizState> {
     state = {
         quiz: [
             {
+                question: 'Какого цвета небо?',
+                rightAnswerId: 2,
                 answers: [
                     {
-                        text: 'Answer1'
+                        id: 1,
+                        text: 'Черный'
                     },
                     {
-                        text: 'Answer2'
+                        id: 2,
+                        text: 'Голубой'
                     },
                     {
-                        text: 'Answer3'
+                        id: 3,
+                        text: 'Зеленый'
                     },
                     {
-                        text: 'Answer4'
+                        id: 4,
+                        text: 'Красный'
                     }
                 ]
             }
         ]
     }
 
+     onAnswerClickHandler = (answerId: number) => {
+        console.log(answerId)
+    }
+
     render() {
-return (
-    <div className='Quiz'>
+        return (
+            <div className='Quiz'>
 
-        <div className='QuizWrapper'>
-            <h1>Ответьте на вопросы</h1>
-            <ActiveQuiz answers={this.state.quiz[0].answers}/>
-        </div>
+                <div className='QuizWrapper'>
+                    <h1>Ответьте на вопросы</h1>
+                    <ActiveQuiz
+                        question={this.state.quiz[0].question}
+                        answers={this.state.quiz[0].answers}
+                        onAnswerClick={this.onAnswerClickHandler}/>
+                </div>
 
-    </div>
-)
+            </div>
+        )
     }
 }
 

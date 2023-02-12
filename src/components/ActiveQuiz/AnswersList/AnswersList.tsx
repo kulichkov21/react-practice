@@ -6,7 +6,10 @@ const AnswersList = (props: any) => (
     <ul className='AnswersList'>
         {props.answers.map((answer: any, index: number) => {
            return (
-               <AnswerItem key={index} answer={answer}></AnswerItem>
+               <AnswerItem
+                   key={index}
+                   answer={answer}
+               onAnswerClick={props.onAnswerClick}></AnswerItem>
            )
         }
         )}
