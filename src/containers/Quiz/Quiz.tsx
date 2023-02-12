@@ -6,9 +6,34 @@ import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz";
 class Quiz extends Component<any, IQuizState> {
 
     state = {
+        currentQuestion: 0,
         quiz: [
             {
+                id: 1,
                 question: 'Какого цвета небо?',
+                rightAnswerId: 2,
+                answers: [
+                    {
+                        id: 1,
+                        text: 'Черный'
+                    },
+                    {
+                        id: 2,
+                        text: 'Голубой'
+                    },
+                    {
+                        id: 3,
+                        text: 'Зеленый'
+                    },
+                    {
+                        id: 4,
+                        text: 'Красный'
+                    }
+                ]
+            },
+            {
+                id: 2,
+                question: 'Какой твой любимый цвет  ?',
                 rightAnswerId: 2,
                 answers: [
                     {
@@ -32,8 +57,8 @@ class Quiz extends Component<any, IQuizState> {
         ]
     }
 
-     onAnswerClickHandler = (answerId: number) => {
-        console.log(answerId)
+    onAnswerClickHandler = (answerId: number) => {
+        this.setState({currentQuestion: this.state.currentQuestion + 1});
     }
 
     render() {
@@ -43,8 +68,10 @@ class Quiz extends Component<any, IQuizState> {
                 <div className='QuizWrapper'>
                     <h1>Ответьте на вопросы</h1>
                     <ActiveQuiz
-                        question={this.state.quiz[0].question}
-                        answers={this.state.quiz[0].answers}
+                        quizLength={this.state.quiz.length}
+                        currentQuestion={this.state.currentQuestion + 1}
+                        question={this.state.quiz[this.state.currentQuestion].question}
+                        answers={this.state.quiz[this.state.currentQuestion].answers}
                         onAnswerClick={this.onAnswerClickHandler}/>
                 </div>
 

@@ -2,7 +2,8 @@ import React from "react";
 import './ActiveQuiz.css';
 import AnswersList from "./AnswersList/AnswersList";
 
-const ActiveQuiz = (props: {answers: any, question: string, onAnswerClick: any}) => (
+const ActiveQuiz = (props: {answers: any, question: string, onAnswerClick: any,
+    currentQuestion: number, quizLength: number}) => (
     <div className='ActiveQuiz'>
 <p className='Question'>
     <span>
@@ -11,7 +12,8 @@ const ActiveQuiz = (props: {answers: any, question: string, onAnswerClick: any})
         {props.question}
     </span>
 
-    <small>4 from 12</small>
+    <small>
+        {props.currentQuestion} from {props.quizLength}</small>
 </p>
     <AnswersList
         onAnswerClick={props.onAnswerClick}
