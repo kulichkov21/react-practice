@@ -17,7 +17,7 @@ const FinishedQuiz = (props: any) => {
         'fa-times' : 'fa-check', props.results[quizItem.id]];
         return (
             <li key={index}>
-                <strong>{index + 1 }</strong> &nbsp
+                <strong>{index + 1 }</strong> &nbsp;
                 {quizItem.question}
                 <i className={classes.join(' ')}></i>
             </li>
