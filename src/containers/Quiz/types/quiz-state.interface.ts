@@ -3,4 +3,5 @@ export interface IQuizState {
     currentQuestion: number;
     answerState: any;
     finished: boolean;
+    results: any;
 }

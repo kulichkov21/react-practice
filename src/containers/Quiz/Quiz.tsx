@@ -6,10 +6,12 @@ import FinishedQuiz from "../../components/FinishedQuiz/FinishedQuiz";
 
 class Quiz extends Component<any, IQuizState> {
 
+
     state = {
+        results: {},
         currentQuestion: 0,
         answerState: null,
-        finished: true,
+        finished: false ,
         quiz: [
             {
                 id: 1,
@@ -66,10 +68,17 @@ class Quiz extends Component<any, IQuizState> {
             if (this.state.answerState[key] === 'success') return;
         }
         const question = this.state.quiz[this.state.currentQuestion];
+        const results = this.state.results;
         if (question.rightAnswerId === answerId) {
+            // @ts-ignore
+            if (!results[question.id]) {
+                // @ts-ignore
+                results[question.id] = 'success'
+            }
 
             this.setState({
-                answerState: {[answerId]: 'success'}
+                answerState: {[answerId]: 'success'},
+                results
             });
 
             const timeout = window.setTimeout(() => {
@@ -88,8 +97,11 @@ class Quiz extends Component<any, IQuizState> {
             }, 1000)
 
         } else {
+            // @ts-ignore
+            results[question.id] = 'error';
             this.setState({
-                answerState: {[answerId]: 'error'}
+                answerState: {[answerId]: 'error'},
+                results
             });
         }
 
@@ -97,6 +109,12 @@ class Quiz extends Component<any, IQuizState> {
 
     isQuizFinished() {
         return this.state.currentQuestion + 1 === this.state.quiz.length
+    }
+
+    retryHandler = () => {
+        this.setState({
+            answerState: null, finished: false,currentQuestion: 0, results: {}
+        })
     }
 
     render() {
@@ -107,7 +125,9 @@ class Quiz extends Component<any, IQuizState> {
                     <h1>Ответьте на вопросы</h1>
                     {this.state.finished ?
                         <FinishedQuiz
-
+                            onRetry={this.retryHandler}
+                            results={this.state.results}
+                            quiz={this.state.quiz}
                         />
                         :
                         <ActiveQuiz
