@@ -1,11 +1,12 @@
-import {Component} from "react";
+import {Component, ComponentProps} from "react";
 import './Quiz.css'
 import {IQuizState} from "./types/quiz-state.interface";
 import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz";
 import FinishedQuiz from "../../components/FinishedQuiz/FinishedQuiz";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
-class Quiz extends Component<any, IQuizState> {
 
+class Quiz extends Component<any, any> {
 
     state = {
         results: {},
@@ -115,6 +116,10 @@ class Quiz extends Component<any, IQuizState> {
         this.setState({
             answerState: null, finished: false,currentQuestion: 0, results: {}
         })
+    }
+
+    componentDidMount() {
+        console.log('quiz id', this)
     }
 
     render() {
