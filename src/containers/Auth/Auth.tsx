@@ -47,8 +47,49 @@ export default class Auth extends Component<any, any> {
     }
 
     private onChangeHandler(event: any, controlName: string) {
-        console.log(controlName, event.target.value)
+
+        const formControls = {...this.state.formControls};
+        // @ts-ignore
+        const control = {...formControls[controlName]};
+
+        control.value = event.target.value;
+        control.touched = true;
+        control.valid = this.validateControl(control.value, control.validation);
+
+        // @ts-ignore
+        formControls[controlName] = control;
+
+        this.setState({formControls});
     }
+
+    validateEmail = (email: any)  => {
+        return String(email)
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+    };
+
+    private validateControl(value: any, validation: any): boolean {
+        if (!validation) return true;
+
+        let isValid = true;
+
+        if (validation.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
+
+        if (validation.email) {
+            isValid = (this.validateEmail(value)!) && isValid;
+        }
+
+        if (validation.minLength) {
+            isValid = value.length >= validation.minLength && isValid;
+        }
+
+        return isValid;
+    }
+
 
     renderInputs() {
         return Object.keys(this.state.formControls).map((controlName, index) => {
