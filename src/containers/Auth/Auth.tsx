@@ -6,6 +6,7 @@ import Input from "../../components/Ui/Input/Input";
 export default class Auth extends Component<any, any> {
 
     state = {
+        isFormValid: false,
         formControls: {
             email: {
                 value: '',
@@ -59,7 +60,14 @@ export default class Auth extends Component<any, any> {
         // @ts-ignore
         formControls[controlName] = control;
 
-        this.setState({formControls});
+        let isFormValid: boolean = true;
+
+        Object.keys(formControls).forEach(name => {
+            // @ts-ignore
+            isFormValid = formControls[name].valid && isFormValid;
+        });
+
+        this.setState({formControls, isFormValid});
     }
 
     validateEmail = (email: any)  => {
@@ -121,7 +129,7 @@ export default class Auth extends Component<any, any> {
 
                         {this.renderInputs()}
 
-                        <Button type='success' onClick={this.loginHandler}>
+                        <Button type='success' onClick={this.loginHandler} disabled={!this.state.isFormValid}>
                             Войти
                         </Button>
                         <Button type='primary' onClick={this.registerHandler}>
