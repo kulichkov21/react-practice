@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import './QuizCreator.css';
 import Button from "../../components/Ui/Button/Button";
-import {createControl} from "../../form/formFramework";
+import {createControl, validate, validateForm} from "../../form/formFramework";
 import Input from "../../components/Ui/Input/Input";
 import Select from "../../components/Ui/Select/Select";
 
@@ -26,20 +26,32 @@ function createFormControls() {
 export default class QuizCreator extends Component<any, any> {
 
     state = {
-       quiz: [],
+        quiz: [],
+        isFormValid: false,
         rightAnswerId: 1,
         formControls: createFormControls()
     }
 
     submitHandler = (event: any) => event.preventDefault();
-    addQuestionHandler = () => {
-
+    addQuestionHandler = (event: any) => {
+        event.preventDefault();
     }
     createQuizHandler = () => {
 
     }
 
     changeHandler = (value: string, controlName: string) => {
+        const formControls = {...this.state.formControls};
+        // @ts-ignore
+        const control = {...formControls[controlName]};
+
+        control.touched = true;
+        control.value = value;
+        control.valid = validate(control.value, control.validation)
+
+        // @ts-ignore
+        formControls[controlName] = control;
+        this.setState({formControls, isFormValid: validateForm(formControls)});
 
     }
 
@@ -49,34 +61,35 @@ export default class QuizCreator extends Component<any, any> {
             const control = this.state.formControls[controlName];
 
             return (
-                <React.Fragment>
-                <Input
-                label={control.label}
-                value={control.value}
-                valid={control.valid}
-                shouldValidate={!!control.validation}
-                touched={control.touched}
-                errorMessage={control.errorMessage}
-                onChange={(event: any) => this.changeHandler(event.target.value, control)}
-                />
+                <React.Fragment key={index}>
+                    <Input
+                        key={index}
+                        label={control.label}
+                        value={control.value}
+                        valid={control.valid}
+                        shouldValidate={!!control.validation}
+                        touched={control.touched}
+                        errorMessage={control.errorMessage}
+                        onChange={(event: any) => this.changeHandler(event.target.value, controlName)}
+                    />
 
-            {index === 0 ? <hr/> : null}
+                    {index === 0 ? <hr/> : null}
                 </React.Fragment>
             )
         })
     }
 
     selectChangeHandler = (event: any) => {
-      this.setState({rightAnswerId: +event.target.value});
+        this.setState({rightAnswerId: +event.target.value});
     }
 
     render() {
-const select = <Select
-label='Выберите правильный ответ'
-value={this.state.rightAnswerId}
-onChange={this.selectChangeHandler}
-options={[{text: 1, value: 1}, {text: 2, value: 2}, {text: 3, value: 3}, {text: 4, value: 4}]}
-/>
+        const select = <Select
+            label='Выберите правильный ответ'
+            value={this.state.rightAnswerId}
+            onChange={this.selectChangeHandler}
+            options={[{text: 1, value: 1}, {text: 2, value: 2}, {text: 3, value: 3}, {text: 4, value: 4}]}
+        />
 
         return (
             <div className='QuizCreator'>
@@ -89,8 +102,10 @@ options={[{text: 1, value: 1}, {text: 2, value: 2}, {text: 3, value: 3}, {text: 
 
                         {select}
 
-                        <Button type={'primary'} onClick={this.addQuestionHandler}>Добавить вопрос</Button>
-                        <Button type={'success'} onClick={this.createQuizHandler}>Сохранить тест</Button>
+                        <Button disabled={!this.state.isFormValid}
+                                type={'primary'} onClick={this.addQuestionHandler}>Добавить вопрос</Button>
+                        <Button disabled={this.state.quiz.length === 0}
+                                type={'success'} onClick={this.createQuizHandler}>Сохранить тест</Button>
 
                     </form>
                 </div>
