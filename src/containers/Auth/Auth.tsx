@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import './Auth.css';
 import Button from "../../components/Ui/Button/Button";
 import Input from "../../components/Ui/Input/Input";
+import axios from "axios";
 
 export default class Auth extends Component<any, any> {
 
@@ -35,11 +36,32 @@ export default class Auth extends Component<any, any> {
         }
     }
 
-    loginHandler = () => {
-
+    loginHandler = async () => {
+        const authData: any = {
+            email: this.state.formControls.email.value,
+            password: this.state.formControls.password.value,
+            returnSecureToken: true
+        }
+        try {
+            const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAVYw8QD10L4gq90bmMWf-5Rlcsqbcnah4', authData)
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    registerHandler = () => {
+    registerHandler = async () => {
+        const authData: any = {
+            email: this.state.formControls.email.value,
+            password: this.state.formControls.password.value,
+            returnSecureToken: true
+        }
+        try {
+            const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAVYw8QD10L4gq90bmMWf-5Rlcsqbcnah4', authData)
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        }
 
     }
 
@@ -70,7 +92,7 @@ export default class Auth extends Component<any, any> {
         this.setState({formControls, isFormValid});
     }
 
-    validateEmail = (email: any)  => {
+    validateEmail = (email: any) => {
         return String(email)
             .toLowerCase()
             .match(
