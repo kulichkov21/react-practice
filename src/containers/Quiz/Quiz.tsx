@@ -4,6 +4,8 @@ import {IQuizState} from "./types/quiz-state.interface";
 import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz";
 import FinishedQuiz from "../../components/FinishedQuiz/FinishedQuiz";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
+import axios from "../../axios/axios-quiz";
+import Loader from "../../components/Ui/Loader/Loader";
 
 
 class Quiz extends Component<any, any> {
@@ -12,55 +14,9 @@ class Quiz extends Component<any, any> {
         results: {},
         currentQuestion: 0,
         answerState: null,
-        finished: false ,
-        quiz: [
-            {
-                id: 1,
-                question: 'Какого цвета небо?',
-                rightAnswerId: 2,
-                answers: [
-                    {
-                        id: 1,
-                        text: 'Черный'
-                    },
-                    {
-                        id: 2,
-                        text: 'Голубой'
-                    },
-                    {
-                        id: 3,
-                        text: 'Зеленый'
-                    },
-                    {
-                        id: 4,
-                        text: 'Красный'
-                    }
-                ]
-            },
-            {
-                id: 2,
-                question: 'Какой твой любимый цвет  ?',
-                rightAnswerId: 2,
-                answers: [
-                    {
-                        id: 1,
-                        text: 'Черный'
-                    },
-                    {
-                        id: 2,
-                        text: 'Голубой'
-                    },
-                    {
-                        id: 3,
-                        text: 'Зеленый'
-                    },
-                    {
-                        id: 4,
-                        text: 'Красный'
-                    }
-                ]
-            }
-        ]
+        finished: false,
+        quiz: [],
+        loading: true
     }
 
     onAnswerClickHandler = (answerId: number) => {
@@ -70,6 +26,7 @@ class Quiz extends Component<any, any> {
         }
         const question = this.state.quiz[this.state.currentQuestion];
         const results = this.state.results;
+        // @ts-ignore
         if (question.rightAnswerId === answerId) {
             // @ts-ignore
             if (!results[question.id]) {
@@ -114,21 +71,33 @@ class Quiz extends Component<any, any> {
 
     retryHandler = () => {
         this.setState({
-            answerState: null, finished: false,currentQuestion: 0, results: {}
+            answerState: null, finished: false, currentQuestion: 0, results: {}
         })
     }
 
-    componentDidMount() {
-        console.log('quiz id', this)
+    async componentDidMount() {
+        try {
+            const response = await axios.get(`quizes/${this.props.match.params.id}.json`);
+            const quiz = response.data;
+
+            this.setState({quiz, loading: false})
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     render() {
+
         return (
             <div className='Quiz'>
 
                 <div className='QuizWrapper'>
                     <h1>Ответьте на вопросы</h1>
-                    {this.state.finished ?
+
+                    {this.state.loading ?
+                    <Loader/>
+                        :
+                        this.state.finished ?
                         <FinishedQuiz
                             onRetry={this.retryHandler}
                             results={this.state.results}
@@ -138,12 +107,16 @@ class Quiz extends Component<any, any> {
                         <ActiveQuiz
                             quizLength={this.state.quiz.length}
                             currentQuestion={this.state.currentQuestion + 1}
+                            // @ts-ignore
                             question={this.state.quiz[this.state.currentQuestion].question}
+                            // @ts-ignore
                             answers={this.state.quiz[this.state.currentQuestion].answers}
                             onAnswerClick={this.onAnswerClickHandler}
                             state={this.state.answerState}
                         />
                     }
+
+
 
                 </div>
 
