@@ -6,18 +6,12 @@ import FinishedQuiz from "../../components/FinishedQuiz/FinishedQuiz";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "../../axios/axios-quiz";
 import Loader from "../../components/Ui/Loader/Loader";
+import {connect} from "react-redux";
+import {Dispatch} from "redux";
+import {fetchQuizById, fetchQuizes} from "../../store/actions/quiz";
 
 
 class Quiz extends Component<any, any> {
-
-    state = {
-        results: {},
-        currentQuestion: 0,
-        answerState: null,
-        finished: false,
-        quiz: [],
-        loading: true
-    }
 
     onAnswerClickHandler = (answerId: number) => {
         if (this.state.answerState) {
@@ -75,15 +69,8 @@ class Quiz extends Component<any, any> {
         })
     }
 
-    async componentDidMount() {
-        try {
-            const response = await axios.get(`quizes/${this.props.match.params.id}.json`);
-            const quiz = response.data;
-
-            this.setState({quiz, loading: false})
-        } catch (error) {
-            console.log(error)
-        }
+    componentDidMount() {
+        this.props.fetchQuizById(this.props.match.params.id);
     }
 
     render() {
@@ -94,28 +81,27 @@ class Quiz extends Component<any, any> {
                 <div className='QuizWrapper'>
                     <h1>Ответьте на вопросы</h1>
 
-                    {this.state.loading ?
-                    <Loader/>
+                    {this.props.loading || !this.props.quiz ?
+                        <Loader/>
                         :
-                        this.state.finished ?
-                        <FinishedQuiz
-                            onRetry={this.retryHandler}
-                            results={this.state.results}
-                            quiz={this.state.quiz}
-                        />
-                        :
-                        <ActiveQuiz
-                            quizLength={this.state.quiz.length}
-                            currentQuestion={this.state.currentQuestion + 1}
-                            // @ts-ignore
-                            question={this.state.quiz[this.state.currentQuestion].question}
-                            // @ts-ignore
-                            answers={this.state.quiz[this.state.currentQuestion].answers}
-                            onAnswerClick={this.onAnswerClickHandler}
-                            state={this.state.answerState}
-                        />
+                        this.props.finished ?
+                            <FinishedQuiz
+                                onRetry={this.retryHandler}
+                                results={this.props.results}
+                                quiz={this.props.quiz}
+                            />
+                            :
+                            <ActiveQuiz
+                                quizLength={this.props.quiz.length}
+                                currentQuestion={this.props.currentQuestion + 1}
+                                // @ts-ignore
+                                question={this.props.quiz[this.props.currentQuestion].question}
+                                // @ts-ignore
+                                answers={this.props.quiz[this.props.currentQuestion].answers}
+                                onAnswerClick={this.onAnswerClickHandler}
+                                state={this.props.answerState}
+                            />
                     }
-
 
 
                 </div>
@@ -125,4 +111,22 @@ class Quiz extends Component<any, any> {
     }
 }
 
-export default Quiz;
+function mapStateToProps(state: any) {
+    return {
+        results: state.quiz.results,
+        currentQuestion: state.quiz.currentQuestion,
+        answerState: state.quiz.answerState,
+        finished: state.quiz.finished,
+        quiz: state.quiz.quiz,
+        loading: state.quiz.loading
+    }
+}
+
+function mapDispatchToProps(dispatch: Dispatch) {
+    return {
+        fetchQuizById: (id: string) => dispatch(fetchQuizById(id)),
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quiz);
