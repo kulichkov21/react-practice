@@ -12,8 +12,13 @@ import Logout from "./components/Logout/Logout";
 import {Dispatch} from "redux";
 import {autoLogin} from "./store/actions/auth";
 
-function App(props: any) {
+class App extends React.Component<any, any> {
 
+    componentDidMount() {
+        this.props.autoLogin()
+    }
+
+    render() {
 
 
     let routes = (
@@ -24,13 +29,13 @@ function App(props: any) {
             <Route path="/" element={<QuizList/>}></Route>
             <Route
                 path="*"
-                element={<Navigate to="/" replace />}
+                element={<Navigate to="/" replace/>}
             />
         </Routes>
 
     )
 
-    if (props.isAuthentificated) {
+    if (this.props.isAuthentificated) {
         routes = (
             <Routes>
                 <Route path="/logout" element={<Logout/>}></Route>
@@ -39,7 +44,7 @@ function App(props: any) {
                 <Route path="/" element={<QuizList/>}></Route>
                 <Route
                     path="*"
-                    element={<Navigate to="/" replace />}
+                    element={<Navigate to="/" replace/>}
                 />
             </Routes>
 
@@ -52,6 +57,7 @@ function App(props: any) {
             {routes}
         </Layout>
     );
+}
 }
 
 function mapStateToProps(state: any) {
@@ -66,5 +72,5 @@ function mapDispatchToProps(dispatch: Dispatch) {
        autoLogin: () => dispatch(autoLogin())
     }
 }
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 

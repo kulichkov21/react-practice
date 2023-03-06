@@ -53,8 +53,20 @@ export function logout(): AnyAction {
     }
 }
 
-export function autoLogin(): AnyAction {
-    return {
-        type: 'AUTO_LOGIN'
+export function autoLogin(): any {
+    return async (dispatch: Dispatch) =>  {
+        const token = localStorage.getItem('token');
+        if (!token) dispatch(logout())
+        if (token) {
+            const expirationDate = new Date(localStorage.getItem('expirationDate') ?? '');
+
+            if (expirationDate <= new Date()) {
+                dispatch(logout());
+            } else {
+                dispatch(authSuccess(token))
+                dispatch(autoLogout((expirationDate.getTime() - new Date().getTime())/1000))
+            }
+
+        }
     }
 }
