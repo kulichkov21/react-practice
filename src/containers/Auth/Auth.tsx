@@ -6,6 +6,7 @@ import axios from "axios";
 import {Dispatch} from "redux";
 import {connect} from "react-redux";
 import {auth} from "../../store/actions/auth";
+import {useNavigate} from "react-router-dom";
 
 class Auth extends Component<any, any> {
 

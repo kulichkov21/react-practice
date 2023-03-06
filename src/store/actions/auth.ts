@@ -1,6 +1,8 @@
 import {AnyAction, Dispatch} from "redux";
 import axios from "axios";
 import {AUTH_LOGOUT, AUTH_SUCCESS} from "./actionTypes";
+import {Navigate, redirect} from "react-router-dom";
+import React from "react";
 
 export function auth(email: string, password: string, isLogin: boolean): any {
     return async (dispatch: Dispatch) => {
@@ -48,5 +50,11 @@ export function logout(): AnyAction {
     localStorage.removeItem('expirationDate');
     return {
         type: AUTH_LOGOUT
+    }
+}
+
+export function autoLogin(): AnyAction {
+    return {
+        type: 'AUTO_LOGIN'
     }
 }
